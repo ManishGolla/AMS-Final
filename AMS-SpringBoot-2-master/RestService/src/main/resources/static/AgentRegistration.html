@@ -12,6 +12,8 @@
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" media="all" href="node_modules/bootstrap/dist/css/Slate.css" />
     <script src="agentregistration.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/additional-methods.min.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
 
@@ -175,20 +177,7 @@ body {
                             <a class="nav-link" href="#">Agent Registration</a>
                           </li>
                   </ul>
-        <!-- <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Agent Registration</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="CalculateCommission">Calculate Commission</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="MangeLicences">Manage Licences</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="CustomerPolicyRegistration">Customer Policy Registration</a>
-            </li>
-        </ul> -->
+       
 
         <ul class="navbar-nav ml-auto">
             <a class="btn btn-info" onclick="logout()">Logout</a>
@@ -200,79 +189,98 @@ body {
             <h3>Agent Registration</h3>
         </center>
         <hr/>
-        <form id="agentform" onsubmit=" return validate()" action="#">
+        <form id="agentform" >
             
-            <div class="form-group ">
-                    <label><span style='color: red'>*</span>Name</label>
-                    <input class="form-control" id="name" type="text" placeholder="Enter agent name">
+                <div class="form-group ">
+                      <label ><span style='color: red'>*</span>Name</label>
+                   
+                        <input class="form-control form-control-danger" name="name" type="text" placeholder="Enter agent name">
+                 
                 </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>Date Of Birth</label>
-                    <input type="date" class="form-control" id="dob" placeholder="Enter agent date of birth">
-                </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>Contact Number</label>
-                    <input type="text" class="form-control" id="contact" placeholder="Enter agent contact number">
-                </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>E-mail Address</label>
-                    <input type="text" class="form-control" id="email" placeholder="Enter agent e-mail">
-                </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>Permanent Address</label>
-                    <textarea class="form-control" id="paddress" rows="3" placeholder="Enter agent's permanent address"></textarea>
-                </div>
-                <div class="material-switch pull-right">
-                    <input id="filladdress" name="someSwitchOption001" type="checkbox" onchange="appendaddr()"> current address same as permanent address</input>
-                </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>Current Address</label>
-                    <textarea class="form-control" id="caddress" rows="3" placeholder="Enter agent's current address"></textarea>
-                </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>Zip Code</label>
-                    <input type="text" class="form-control" id="zipcode" placeholder="Enter zip code">
-                </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>City</label>
-                    <input type="text" class="form-control" id="city" placeholder="Enter city">
-                </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>State</label>
-                    <input type="text" class="form-control" id="state" placeholder="Enter state">
-                </div>
-               <div class="form-group">
-                <label><span style='color: red'>*</span>Type of Proof</label>
-                <select class="custom-select" id="apidtype" onchange="selectidtype()">
-                    <option value="Passport">Passport</option>
-                    <option value="Adhar">Adhar Card</option>
-                    <option value="Voterid">Voter ID</option>
-                    <option value="Drivinglicence">Driving licence no</option>
-                </select>
-               </div>
-               <div id="formspace" class="form-group">
-                    <div class="form-group ">
-                            <label><span style="color:red">*</span></label>
-                            <input type="text" class="form-control" id="apid" placeholder="Enter Passport Number">
+                <div class="row">
+                        <div class="form-group col-sm-12 col-lg-6">
+                                <label ><span style='color: red'>*</span>Date Of Birth</label>
+                                           <input type="date" class="form-control" name="dob" id="dob" placeholder="Enter agent date of birth">
+                             
                             </div>
-             </div>
-                <div class="form-group">
-                    <label><span style='color: red'>*</span>Date Of Join</label>
-                    <input type="date" class="form-control" id="doj" placeholder="Enter date of join">
+                            <div class="form-group col-sm-12 col-lg-6">
+                                    <label><span style='color: red'>*</span>Date Of Join</label>
+                                    <input type="date" class="form-control" name="doj" id="doj" placeholder="Enter date of join">
+                                </div>
                 </div>
-                <label><span style='color: red'>*</span>Agent Type</label>
-                <select class="custom-select" id="type">
-                    <option value="CA">Captive</option>
-                    <option value="IA">Independent</option>
-                </select>
-    
-    
-                <hr>
-                <center>
-                    <button type="submit" class="btn btn-primary col-5">Submit</button>
-                    <button class="btn  col-6" id="reset" type="reset" value="Reset">Reset</button>
-                </center>
-            </form>
+                   <div class="row">
+                        <div class="form-group col-sm-12 col-lg-6" >
+                                <label ><span style='color: red'>*</span>Contact</label>
+                                
+                                 <input type="text" class="form-control" name="contact" id="contact" placeholder="Enter agent contact number">
+                          </div>
+                          <div class="form-group col-sm-12 col-lg-6" >
+                                <label ><span style='color: red'>*</span>E-mail Address</label>
+                                                      <input type="text" class="form-control" name="email" id="email" placeholder="Enter agent e-mail">
+                               
+                            </div>
+                   </div>       
+                    <div class="row">
+                            <div class="form-group col-md-4 col-sm-12 col-lg-4">
+                                    <label><span style='color: red'>*</span>Zip Code</label>
+                                    <input type="text" class="form-control" name="zipcode"id="zipcode" placeholder="Enter zip code">
+                                </div>
+                        <div class="form-group col-md-4 col-sm-12 col-lg-4">
+                            <label><span style='color: red'>*</span>City</label>
+                            <input type="text" class="form-control" name="city" id="city" placeholder="Enter city">
+                            
+                        </div>
+                        <div class="form-group col-md-4 col-sm-12 col-lg-4">
+                                <label><span style='color: red'>*</span>State</label>
+                                <input type="text" class="form-control" name="state"id="state" placeholder="Enter state">
+                            </div>
+                    </div>
+                        <div class="row">
+                                <div class="form-group col-md-6">
+                                        <label><span style='color: red'>*</span>Permanent Address</label>
+                                        <textarea class="form-control" name="paddress"id="paddress" rows="5" placeholder="Enter agent's permanent address"></textarea>
+                                    </div>
+                                <div class="form-group col-md-6">
+                                        <label><span style='color: red'>*</span>Current Address</label>
+                                        <textarea class="form-control" name ="caddress"id="caddress" rows="5" placeholder="Enter agent's current address"></textarea>
+                                    </div>
+                                   
+                                </div>
+                                <div class="material-switch pull-right">
+                                        <input id="filladdress" name="someSwitchOption001" type="checkbox" > current address same as permanent address</input>
+                                    </div>
+                                    <div class="row">
+                                            <div class="form-group col-sm-12 col-lg-6">
+                                                    <label><span style='color: red'>*</span>Type of Proof</label>
+                                                    <select class="custom-select" id="apidtype" >
+                                                        <option value="P">Passport</option>
+                                                        <option value="A">Adhar Card</option>
+                                                        <option value="V">Voter ID</option>
+                                                        <option value="D">Driving licence no</option>
+                                                    </select>
+                                                   </div>
+                                                        <div class="form-group col-sm-12 col-lg-6 " id="apidfield">
+                                                                <label><span style="color:red">*</span>Passport</label>
+                                                                <input type="text" class="form-control" name="apid_passport" id="apid_passport" placeholder="Enter Passport Number">        
+                                                        </div>
+                                    </div>
+                  
+                 
+                    <label><span style='color: red'>*</span>Agent Type</label>
+                  <div class="form-group">
+                    <select class="custom-select" id="type">
+                        <option value="CA">Captive</option>
+                        <option value="IA">Independent</option>
+                    </select>
+                </div>
+        
+        
+                    <hr>
+                    <center>
+                        <button type="submit" class="btn btn-primary col-5">Submit</button>
+                        <button class="btn  col-6" id="reset" type="reset" value="Reset">Reset</button>
+                    </center>
+                </form>
     </div>
    
 

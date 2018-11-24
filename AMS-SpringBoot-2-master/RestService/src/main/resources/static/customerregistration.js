@@ -1,26 +1,137 @@
-var flag = false;
-function validate() {
-    flag = true;
-    $('[data-toggle="tooltip"]').tooltip('dispose');
-    $('[data-toggle="tooltip"]').removeAttr("title");
-    $('[data-toggle="tooltip"]').removeAttr("data-toggle");
-    validateName();
-    validateAddress();
-    validateCity();
-    validateState();
-    validateZip();
-    validatePremiums();
-    validateIncome();
-    validateContact();
-    validateEMail();
-    validatePassword();
-    validateDob();
-    validateHeight();
-    validateWeight();
-    $('[data-toggle="tooltip"]').tooltip({ placement: 'right', trigger: 'manual' }).tooltip('show');
-    if (flag == true) { store(); }
-    return false;
-}
+jQuery(function ($) {
+    $.validator.addMethod("validDOB",function(value, element) {              
+            
+             var from = value.split("-"); // DD/MM/YYYY
+            var day = from[2];
+            var month = from[1];
+            var year = from[0];
+            var age = 18;
+
+            var mydate = new Date();
+            mydate.setFullYear(year, month-1, day);
+
+            var currdate = new Date();
+            var setDate = new Date();
+
+            setDate.setFullYear(mydate.getFullYear() + age, month-1, day);
+
+            if ((currdate - setDate) > 0){
+                return true;
+            }else{
+                return false;
+            }
+        },
+        "Sorry, you must be 18 years of age to apply"
+    );
+    $.validator.addMethod('strongPassword', function (value, Element) {
+        return this.optional(Element) || value.length >= 8 && /\d/.test(value) && /[A-Z]{1}/.test(value);
+    }, 'Password should be 8 character long and contain atleast one digit, and a capital letter');
+
+    $.validator.addMethod("exactlength", function(value, element, param) {
+        return this.optional(element) || value.length == param;
+       }, $.validator.format("Please enter exactly {0} characters."));
+
+       $.validator.addMethod("doj_shouldbe",function(value,element){
+        var str = $(element).val();
+        var d1 = Date.parse(str);
+        var d2 = new Date().getTime();
+        return this.optional(element)||d1<=d2;
+       },$.validator.format("Date should be atmost today or one in the past"));
+    $("#customerform").validate({
+        onkeyup: function(element) {
+            this.element(element);  // <- "eager validation"
+        },
+        onfocusout: function(element) {
+            this.element(element);  // <- "eager validation"
+        },
+        errorClass: 'error',
+        highlight: function (Element) {
+
+            $(Element).addClass('is-invalid')
+        },
+        unhighlight: function (Element) {
+            $(Element).removeClass('is-invalid')
+        },
+
+        rules: {
+            name: {
+                required: true,
+                lettersonly: true,
+                minlength: 4,
+                maxlength: 50
+            },
+            dob: {
+                required: true,
+                date:true,
+                validDOB:true
+            },
+            contact: {
+                required: true,
+                digits: true,
+                exactlength:10
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            address: {
+                required: true
+            },
+            mark:{
+              required:true
+            },
+            height:{
+               
+                pattern:/^([0-9]{1,})(.{0,1})([0-9]{0,})$/
+            },
+            weight:{
+                
+                pattern:/^([0-9]{1,})(.{0,1})([0-9]{0,})$/
+            },
+            zipcode: {
+                required: true,
+                digits:true,
+                exactlength:6
+            },
+            city: {
+                required: true,
+                lettersonly: true
+            },
+            state: {
+                required: true,
+                lettersonly: true
+            },
+            income: {
+                required: true,
+                digits:true
+            },
+        password:{
+            strongPassword:true,
+            required:true
+        },
+        cpassword:{
+            equalTo : "#password"
+        }
+        },
+        messages: {
+            name: {},
+            dob: {},
+            contact: {},
+            email: {},
+            paddress: {},
+            caddress: {},
+            zipcode: {},
+            city: {},
+            state: {},
+            doj: {},
+            cpassword:{
+                equalTo : "Enter the same password again "
+            }
+        },
+        submitHandler: function(form) {
+            store()}
+    });
+});
 
 function validateHeight() {
     var str = $("#height").val();

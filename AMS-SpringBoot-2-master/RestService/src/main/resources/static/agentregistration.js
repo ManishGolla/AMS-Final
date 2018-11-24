@@ -1,24 +1,3 @@
-var flag = true;
-function validate() {
-    flag = true;
-    $('[data-toggle="tooltip"]').tooltip('dispose');
-    $('[data-toggle="tooltip"]').removeAttr("title");
-    $('[data-toggle="tooltip"]').removeAttr("data-toggle");
-    validateName();
-    validatepAddress();
-    validatecAddress();
-    validateCity();
-    validateState();
-    validateZip();
-    validateContact();
-    validateEMail();
-    validateDob();
-    validateDoj();
-    $('[data-toggle="tooltip"]').tooltip({ placement: 'right', trigger: 'manual' }).tooltip('show');
-    if(flag==true){store();}
-    return false;
-}
-
 $(function(){
  
         $("#filladdress").click(function () {
@@ -28,217 +7,186 @@ $(function(){
                 $("caddress").val('');  
             }
     });
+    $("#apidtype").on("change",function(){
+        var adhar='<label><span style="color:red">*</span>Adhar</label>'+
+        '<input type="text" class="form-control" name="apid_adhar" id="apid_adhar" placeholder="Enter Adhar Number">';
+     var passport='<label><span style="color:red">*</span>Passport</label>'+
+     '<input type="text" class="form-control" name="apid_passport" id="apid_passport" placeholder="Enter Passport Number">';
+     var drive='<label><span style="color:red">*</span>Driving Licence</label>'+
+     '<input type="text" class="form-control" name="apid_driving" id="apid_driving" placeholder="Enter Driving Licence Number">';
+     var voter='<label><span style="color:red">*</span>Voter Id</label>'+
+     '<input type="text" class="form-control" name="apid_voter" id="apid_voter" placeholder="Enter Voter Id">';
+        if($('#apidtype').val()=='A'){
+           $('#apidfield').empty();
+           $(adhar).appendTo('#apidfield');
+        }
+        else if ($('#apidtype').val()=='P'){
+            $('#apidfield').empty();
+           $(passport).appendTo('#apidfield');
+        }
+        else if($('#apidtype').val()=='D'){
+            $('#apidfield').empty();
+           $(drive).appendTo('#apidfield');
+        }
+        else if ($('#apidtype').val()=='V'){
+            $('#apidfield').empty();
+           $(voter).appendTo('#apidfield');
+        }
+    })
 });
-function validateName() {
-    var str = $("#name").val();
-    if (str == '') {
-        $("#name").attr("data-toggle", "tooltip");
-        $("#name").attr("title", "Mandatory");
-        flag = false;
-    }
-    else {
-        var b = new RegExp("[^A-Za-z ]").test(str);
-        if (b) {
-            $("#name").attr("data-toggle", "tooltip");
-            $("#name").attr("title", "Name can contain only letters and spaces");
-            flag = false;
-        }
-    }
-}
-function validateAdhar(){
-    var str = $("#name").val();
-    if (str == '') {
-        $("#name").attr("data-toggle", "tooltip");
-        $("#name").attr("title", "Mandatory");
-        flag = false;
-    }
-    else {
-        var b = new RegExp("[^A-Za-z ]").test(str);
-        if (b) {
-            $("#name").attr("data-toggle", "tooltip");
-            $("#name").attr("title", "Name can contain only letters and spaces");
-            flag = false;
-        }
-    }
-}
-function validateDob() {
-    var str = $("#dob").val();
-    if (str == '') {
-        $("#dob").attr("data-toggle", "tooltip");
-        $("#dob").attr("title", "Mandatory");
-        flag = false;
-    }
-    else {
+jQuery(function ($) {
+    $.validator.addMethod("validDOB",function(value, element) {              
+            
+             var from = value.split("-"); // DD/MM/YYYY
+            var day = from[2];
+            var month = from[1];
+            var year = from[0];
+            var age = 18;
 
-        var d1 = Date.parse(str);
-        var d2 = new Date().getTime();
-        if (d1 > d2) {
-            $("#dob").attr("data-toggle", "tooltip");
-            $("#dob").attr("title", "DOB can't be more than system date");
-            flag = false;
-        }
-        else {
-            var d3 = (d2 - d1) / 31536000000;
-            if (d3 < 18) {
-                $("#dob").attr("data-toggle", "tooltip");
-                $("#dob").attr("title", "Agent has to be minimum 18 years");
-                flag = false;
+            var mydate = new Date();
+            mydate.setFullYear(year, month-1, day);
+
+            var currdate = new Date();
+            var setDate = new Date();
+
+            setDate.setFullYear(mydate.getFullYear() + age, month-1, day);
+
+            if ((currdate - setDate) > 0){
+                return true;
+            }else{
+                return false;
             }
-        }
-    }
-}
+        },
+        "Sorry, you must be 18 years of age to apply"
+    );
+    $.validator.addMethod('strongPassword', function (value, Element) {
+        return this.optional(Element) || value.length >= 8 && /\d/.test(value) && /[A-Z]{1}/.test(value);
+    }, 'Password should be 8 character long and contain atleast one digit, and a capital letter');
 
-function validateDoj() {
-    var str = $("#doj").val();
-    if (str == '') {
-        $("#doj").attr("data-toggle", "tooltip");
-        $("#doj").attr("title", "Mandatory");
-        flag = false;
-    }
-    else {
+    $.validator.addMethod("exactlength", function(value, element, param) {
+        return this.optional(element) || value.length == param;
+       }, $.validator.format("Please enter exactly {0} characters."));
 
+       $.validator.addMethod("doj_shouldbe",function(value,element){
+        var str = $(element).val();
         var d1 = Date.parse(str);
         var d2 = new Date().getTime();
-        if (d1 > d2) {
-            $("#doj").attr("data-toggle", "tooltip");
-            $("#doj").attr("title", "DOJ can't be more than system date");
-            flag = false;
-        }
-    }
-}
+        return this.optional(element)||d1<=d2;
+       },$.validator.format("Date should be atmost today or one in the past"));
+    $("#agentform").validate({
+        onkeyup: function(element) {
+            this.element(element);  // <- "eager validation"
+        },
+        onfocusout: function(element) {
+            this.element(element);  // <- "eager validation"
+        },
+        errorClass: 'error',
+        highlight: function (Element) {
 
-function validatepAddress() {
-    var str = $("#paddress").val();
-    if (str == '') {
-        $("#paddress").attr("data-toggle", "tooltip");
-        $("#paddress").attr("title", "Mandatory");
-        flag = false;
-    }
-}
-function validatecAddress() {
-    var str = $("#caddress").val();
-    if (str == '') {
-        $("#caddress").attr("data-toggle", "tooltip");
-        $("#caddress").attr("title", "Mandatory");
-        flag = false;
-    }
-}
+            $(Element).addClass('is-invalid')
+        },
+        unhighlight: function (Element) {
+            $(Element).removeClass('is-invalid')
+        },
 
-function validateCity() {
-    var str = $("#city").val();
-    if (str == '') {
-        $("#city").attr("data-toggle", "tooltip");
-        $("#city").attr("title", "Mandatory");
-        flag = false;
-    }
-}
+        rules: {
+            name: {
+                required: true,
+                lettersonly: true,
+                minlength: 4,
+                maxlength: 50
+            },
+            dob: {
+                required: true,
+                date:true,
+                validDOB:true
+            },
+            contact: {
+                required: true,
+                digits: true,
+                exactlength:10
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            paddress: {
+                required: true
+            },
+            caddress: {
+                required: true
+            },
+            zipcode: {
+                required: true,
+                digits:true,
+                exactlength:6
+            },
+            city: {
+                required: true,
+                lettersonly: true
+            },
+            state: {
+                required: true,
+                lettersonly: true
+            },
+            doj: {
+                required: true,
+                doj_shouldbe:true
+            },
+            apid_adhar:{
+                required: true,
+                digits:true,
+                exactlength:12
+                
+            },
+            apid_driving:{
+                required:true,
+                pattern:/^([A-Z]{2})(\d{2})(\d{4})(\d{7})$/i
 
-function validateState() {
-    var str = $("#state").val();
-    if (str == '') {
-        $("#state").attr("data-toggle", "tooltip");
-        $("#state").attr("title", "Mandatory");
-        flag = false;
-    }
-}
+            },
+            apid_passport:{
+                required:true,
+                pattern:/^[A-PR-WY][1-9]\d\s?\d{4}[1-9]$/i
 
-function validateZip() {
-    var str = $("#zipcode").val();
-    if (str == '') {
-        $("#zipcode").attr("data-toggle", "tooltip");
-        $("#zipcode").attr("title", "Mandatory");
-        flag = false;
-    }
-    else {
-        var match = str.match("[0-9]{6}");
-        if (!(match != null && str == match[0])) {
-            $("#zipcode").attr("data-toggle", "tooltip");
-            $("#zipcode").attr("title", "Zipcode should be of 6 digits");
-            flag = false;
-        }
-    }
-}
+            },
+            apid_voter:{
+                required:true,
+                pattern:/^[A-Z]{3}[0-9]{7}$/i
+            }
 
-function validateContact() {
-    var str = $("#contact").val();
-    if (str == '') {
-        $("#contact").attr("data-toggle", "tooltip");
-        $("#contact").attr("title", "Mandatory");
-        flag = false;
-    }
-    else {
-        var match = str.match("[0-9]{10}");
-        if (!(match != null && str == match[0])) {
-            $("#contactno").attr("data-toggle", "tooltip");
-            $("#contactno").attr("title", "Contact No. should be of 10 digits");
-            flag = false;
-        }
-    }
-}
+        },
+        messages: {
+            name: {},
+            dob: {},
+            contact: {},
+            email: {},
+            paddress: {},
+            caddress: {},
+            zipcode: {},
+            city: {},
+            state: {},
+            doj: {},
+            apid_adhar:{
+                
+                digits:"enter a valid adhar number",
+                pattern:"Enter a valid adhar number"         
+            },
+            apid_driving:{
+                
+                pattern:"Enter a valid driving licence number"
+            },
+            apid_passport:{
+               pattern:"Enter a valid passport number"
 
-function validateEMail() {
-    var str = $("#email").val();
-    if (str == '') {
-        $("#email").attr("data-toggle", "tooltip");
-        $("#email").attr("title", "Mandatory");
-        flag = false;
-    }
-    else {
-        var match = str.match("[a-zA-z0-9\\.\\_\\-]{2,}@[a-zA-z0-9\\.\\_\\-]{2,}\\.[a-zA-z\\.]{2,}");
-        if (!(match != null && str == match[0])) {
-            $("#email").attr("data-toggle", "tooltip");
-            $("#email").attr("title", "Please enter a valid email address");
-            flag = false;
-        }
-    }
-}
-function selectidtype(){
-    var Adhar='<div class="form-group ">'+
-    '<label><span style='+'color: red'+'>*</span></label>'+
-    '<input type="text" class="form-control" id="apid" placeholder="Enter Adhar Number">'+
-    '</div>'
-    
-    var Passport='<div class="form-group ">'+
-    '<label><span style='+'color: red'+'>*</span></label>'+
-    '<input type="text" class="form-control" id="apid" placeholder="Enter Passport Number">'+
-    '</div>'
-    
-    var Voterid='<div class="form-group ">'+
-    '<label><span style='+'color: red'+'>*</span></label>'+
-    '<input type="text" class="form-control" id="apid" placeholder="Enter Voter ID">'+
-    '</div>'
-    
-    var Drivinglicence='<div class="form-group ">'+
-    '<label><span style='+'color: red'+'>*</span></label>'+
-    '<input type="text" class="form-control" id="apid" placeholder="Enter Driving Licence No.">'+
-    '</div>'
-
-    if($("#apidtype").find(":selected").text()=='Passport'){
-        $("#formspace").empty();
-        $("#formspace").append(Passport);
-    }
-    else if($("#apidtype").find(":selected").text()=='Adhar'){
-
-        $("#formspace").empty();
-        $("#formspace").append(Adhar);
-        populateAgents();
-
-    }
-    else if($("#apidtype").find(":selected").text()=='Voterid'){
-
-        $("#formspace").empty();
-        $("#formspace").append(Voterid);
-        populateAgents();
-
-    }
-    else if($("#apidtype").find(":selected").text()=='Drivinglicence'){
-
-        $("#formspace").empty();
-        $("#formspace").append(Drivinglicence);
-        populateAgents();
-
-    }
-}
+            },
+            apid_voter:{
+                pattern:" Enter a valid voter id"
+            }
+        },
+        submitHandler: function(form) {
+            store()}
+    });
+});
 
 function getJson() {
     var $items = $('#name,#dob,#contact,#email,#paddress,#caddress,#zipcode,#city,#state,#doj,#type');
@@ -251,6 +199,7 @@ function getJson() {
 }
 
 function store() {
+    alert("store called");
     var json = getJson();
     $.ajax({
         type: "POST",
